@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tracking System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #0a0a0a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
+        }
+
+        .screen {
+            width: 800px;
+            height: 450px;
+            background: #050505;
+            border: 2px solid #1a3a1a;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 0 30px rgba(0, 255, 0, 0.1);
+        }
+
+        .grid {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 0, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.05) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        .header {
+            position: absolute;
+            top: 10px;
+            left: 15px;
+            color: #00ff00;
+            font-size: 14px;
+            letter-spacing: 2px;
+            text-shadow: 0 0 5px #00ff00;
+        }
+
+        .status {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            color: #ff3333;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-shadow: 0 0 5px #ff0000;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
+        }
+
+        .target {
+            position: absolute;
+            width: 12px;
+            height: 12px;
+            background: #00aaff;
+            border-radius: 50%;
+            box-shadow: 0 0 15px #00aaff;
+            top: 60%;
+            left: 30%;
+            z-index: 3;
+        }
+
+        .target-label {
+            position: absolute;
+            top: 62%;
+            left: 31%;
+            color: #00aaff;
+            font-size: 11px;
+            z-index: 3;
+        }
+
+        .attacker {
+            position: absolute;
+            width: 14px;
+            height: 14px;
+            background: #ff0000;
+            border-radius: 50%;
+            box-shadow: 0 0 20px #ff0000;
+            top: 20%;
+            left: 70%;
+            z-index: 4;
+            animation: pulse 0.8s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+        }
+
+        .attacker-label {
+            position: absolute;
+            top: 18%;
+            left: 68%;
+            color: #ff0000;
+            font-size: 11px;
+            z-index: 4;
+        }
+
+        .line {
+            position: absolute;
+            height: 2px;
+            background: #ff3333;
+            transform-origin: left center;
+            z-index: 2;
+            box-shadow: 0 0 10px #ff0000;
+            transition: all 0.5s;
+        }
+
+        .log {
+            position: absolute;
+            bottom: 10px;
+            left: 15px;
+            color: #00ff00;
+            font-size: 11px;
+            line-height: 1.6;
+            z-index: 5;
+            text-shadow: 0 0 3px #00ff00;
+        }
+
+        .warning {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            color: #ff0000;
+            font-size: 12px;
+            z-index: 5;
+            animation: blink 0.5s infinite;
+        }
+    </style>
+</head>
+<body>
+    <div class="screen">
+        <div class="grid"></div>
+        <div class="header">◉ SECURE TRACKING SYSTEM v2.7</div>
+        <div class="status">⚠ THREAT ACTIVE</div>
+
+        <div class="target"></div>
+        <div class="target-label">TARGET: UNKNOWN</div>
+
+        <div class="attacker"></div>
+        <div class="attacker-label">ATTACKER: UNTRACED</div>
+
+        <div class="line" id="line"></div>
+
+        <div class="log" id="log">
+            [*] Initializing tracker...<br>
+            [*] Scanning network...<br>
+            [*] Target locked...
+        </div>
+
+        <div class="warning">▲ SIGNAL UNSTABLE</div>
+    </div>
+
+    <script>
+        const attacker = document.querySelector('.attacker');
+        const line = document.getElementById('line');
+        const log = document.getElementById('log');
+
+        const targetX = 260;
+        const targetY = 280;
+
+        let attackerX = 560;
+        let attackerY = 100;
+
+        function updateLine() {
+            const dx = targetX - attackerX;
+            const dy = targetY - attackerY;
+            const length = Math.sqrt(dx * dx + dy * dy);
+            const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+
+            line.style.width = length + 'px';
+            line.style.left = attackerX + 'px';
+            line.style.top = attackerY + 'px';
+            line.style.transform = `rotate(${angle}deg)`;
+        }
+
+        function moveAttacker() {
+            attackerX += (Math.random() - 0.5) * 60;
+            attackerY += (Math.random() - 0.5) * 60;
+
+            attackerX = Math.max(50, Math.min(750, attackerX));
+            attackerY = Math.max(50, Math.min(400, attackerY));
+
+            attacker.style.left = attackerX + 'px';
+            attacker.style.top = attackerY + 'px';
+
+            updateLine();
+        }
+
+        function addLog(message) {
+            const lines = log.innerHTML.split('<br>');
+            if (lines.length > 5) {
+                lines.shift();
+            }
+            lines.push(message);
+            log.innerHTML = lines.join('<br>');
+        }
+
+        const messages = [
+            "[*] Rerouting connection...",
+            "[*] IP changed: 197.x.x.x",
+            "[*] Threat level: HIGH",
+            "[*] Signal lost... reconnecting...",
+            "[*] Attacker moving..."
+        ];
+
+        let msgIndex = 0;
+
+        setInterval(() => {
+            moveAttacker();
+        }, 800);
+
+        setInterval(() => {
+            addLog(messages[msgIndex % messages.length]);
+            msgIndex++;
+        }, 2000);
+
+        updateLine();
+    </script>
+</body>
+</html>
