@@ -31,7 +31,7 @@
             position: absolute;
             width: 100%;
             height: 2px;
-            background: rgba(0, 255, 0, 0.1);
+            background: rgba(0, 255, 0, 0.08);
             top: 0;
             animation: scan 4s linear infinite;
             z-index: 10;
@@ -50,6 +50,30 @@
                 linear-gradient(rgba(0, 255, 0, 0.04) 1px, transparent 1px),
                 linear-gradient(90deg, rgba(0, 255, 0, 0.04) 1px, transparent 1px);
             background-size: 30px 30px;
+        }
+
+        .circle {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 360px;
+            height: 360px;
+            border: 1px solid rgba(0, 255, 0, 0.1);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .circle2 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 250px;
+            height: 250px;
+            border: 1px dashed rgba(0, 255, 0, 0.06);
+            border-radius: 50%;
+            z-index: 1;
         }
 
         .header {
@@ -89,23 +113,26 @@
 
         .target {
             position: absolute;
-            width: 10px;
-            height: 10px;
+            width: 14px;
+            height: 14px;
             background: #00aaff;
             border-radius: 50%;
-            box-shadow: 0 0 12px #00aaff;
-            top: 60%;
-            left: 30%;
-            z-index: 3;
+            box-shadow: 0 0 20px #00aaff, 0 0 40px rgba(0, 170, 255, 0.3);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 4;
         }
 
         .target-label {
             position: absolute;
-            top: 62%;
-            left: 31%;
+            top: 54%;
+            left: 50%;
+            transform: translateX(-50%);
             color: #00aaff;
             font-size: 10px;
-            z-index: 3;
+            z-index: 5;
+            text-align: center;
         }
 
         .attacker {
@@ -115,9 +142,9 @@
             background: #ff0000;
             border-radius: 50%;
             box-shadow: 0 0 18px #ff0000;
-            top: 25%;
-            left: 65%;
-            z-index: 4;
+            top: 50%;
+            left: 50%;
+            z-index: 6;
             animation: pulse 1s infinite;
         }
 
@@ -128,11 +155,10 @@
 
         .attacker-label {
             position: absolute;
-            top: 23%;
-            left: 63%;
             color: #ff0000;
             font-size: 10px;
-            z-index: 4;
+            z-index: 6;
+            white-space: nowrap;
         }
 
         .line {
@@ -171,16 +197,18 @@
     <div class="screen">
         <div class="grid"></div>
         <div class="scanline"></div>
+        <div class="circle"></div>
+        <div class="circle2"></div>
 
         <div class="header">◉ SECURE TRACKING SYSTEM v2.7</div>
         <div class="time" id="time">00:00:00</div>
         <div class="status" id="status">⚠ THREAT ACTIVE</div>
 
         <div class="target"></div>
-        <div class="target-label">TARGET: UNKNOWN</div>
+        <div class="target-label">TARGET: LOCKED</div>
 
         <div class="attacker" id="attacker"></div>
-        <div class="attacker-label">ATTACKER: UNTRACED</div>
+        <div class="attacker-label" id="attackerLabel">ATTACKER</div>
 
         <div class="line" id="line"></div>
 
@@ -191,31 +219,33 @@
         </div>
 
         <div class="coords" id="coords">
-            LAT: 30.0444<br>
-            LON: 31.2357
+            LAT: --.--<br>
+            LON: --.--
         </div>
     </div>
 
     <script>
         const attacker = document.getElementById('attacker');
+        const attackerLabel = document.getElementById('attackerLabel');
         const line = document.getElementById('line');
         const log = document.getElementById('log');
         const timeEl = document.getElementById('time');
         const statusEl = document.getElementById('status');
         const coordsEl = document.getElementById('coords');
 
-        const targetX = 260;
-        const targetY = 280;
+        const centerX = 400;
+        const centerY = 225;
+        const radius = 120;
 
-        let attackerX = 520;
-        let attackerY = 110;
+        let angle = Math.random() * 360;
 
         const statusMessages = [
             "⚠ THREAT ACTIVE",
             "⚠ SIGNAL UNSTABLE",
             "⚠ REROUTING...",
             "⚠ TRACKING RESTORED",
-            "⚠ HIGH RISK"
+            "⚠ HIGH RISK",
+            "⚠ MOVEMENT DETECTED"
         ];
 
         const logMessages = [
@@ -228,7 +258,9 @@
             "[*] Signal encrypted",
             "[*] Monitoring target...",
             "[*] Threat level updated",
-            "[*] Tracking active..."
+            "[*] Tracking active...",
+            "[*] Coordinates changed",
+            "[*] Rerouting connection..."
         ];
 
         const cities = [
@@ -237,6 +269,7 @@
             { name: "Giza", lat: 29.9870, lon: 31.2118 },
             { name: "Benghazi", lat: 32.1167, lon: 20.0833 },
             { name: "Tripoli", lat: 32.8872, lon: 13.1913 },
+            { name: "Khartoum", lat: 15.5007, lon: 32.5599 },
             { name: "Unknown", lat: 0, lon: 0 }
         ];
 
@@ -248,29 +281,32 @@
             timeEl.textContent = `${h}:${m}:${s}`;
         }
 
-        function updateLine() {
-            const dx = targetX - attackerX;
-            const dy = targetY - attackerY;
+        function updatePositions() {
+            const rad = angle * (Math.PI / 180);
+            const x = centerX + Math.cos(rad) * radius;
+            const y = centerY + Math.sin(rad) * radius;
+
+            attacker.style.left = x + 'px';
+            attacker.style.top = y + 'px';
+
+            attackerLabel.style.left = (x + 10) + 'px';
+            attackerLabel.style.top = (y - 15) + 'px';
+
+            const dx = centerX - x;
+            const dy = centerY - y;
             const length = Math.sqrt(dx * dx + dy * dy);
-            const angle = Math.atan2(dy, dx) * (180 / Math.PI);
+            const lineAngle = Math.atan2(dy, dx) * (180 / Math.PI);
 
             line.style.width = length + 'px';
-            line.style.left = attackerX + 'px';
-            line.style.top = attackerY + 'px';
-            line.style.transform = `rotate(${angle}deg)`;
+            line.style.left = x + 'px';
+            line.style.top = y + 'px';
+            line.style.transform = `rotate(${lineAngle}deg)`;
         }
 
         function moveAttacker() {
-            attackerX += (Math.random() - 0.5) * 40;
-            attackerY += (Math.random() - 0.5) * 40;
-
-            attackerX = Math.max(60, Math.min(730, attackerX));
-            attackerY = Math.max(40, Math.min(390, attackerY));
-
-            attacker.style.left = attackerX + 'px';
-            attacker.style.top = attackerY + 'px';
-
-            updateLine();
+            angle += (Math.random() - 0.5) * 60;
+            angle = Math.max(0, Math.min(360, angle));
+            updatePositions();
         }
 
         function addLog(message) {
@@ -297,21 +333,21 @@
         let statusIndex = 0;
 
         setInterval(updateTime, 1000);
-        setInterval(moveAttacker, 1200);
-        setInterval(updateCoords, 3000);
+        setInterval(moveAttacker, 1000);
+        setInterval(updateCoords, 3500);
 
         setInterval(() => {
             addLog(logMessages[logIndex % logMessages.length]);
             logIndex++;
-        }, 2500);
+        }, 2200);
 
         setInterval(() => {
             statusEl.textContent = statusMessages[statusIndex % statusMessages.length];
             statusIndex++;
-        }, 5000);
+        }, 4500);
 
         updateTime();
-        updateLine();
+        updatePositions();
         updateCoords();
     </script>
 </body>
