@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Secure Tracking System</title>
+    <title>Global Threat Monitoring System</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -18,22 +18,22 @@
         }
 
         .screen {
-            width: 800px;
-            height: 450px;
-            background: #020202;
+            width: 850px;
+            height: 500px;
+            background: #010101;
             border: 1px solid #0f3a0f;
             position: relative;
             overflow: hidden;
-            box-shadow: 0 0 40px rgba(0, 255, 0, 0.08);
+            box-shadow: 0 0 50px rgba(0, 255, 0, 0.06);
         }
 
         .scanline {
             position: absolute;
             width: 100%;
             height: 2px;
-            background: rgba(0, 255, 0, 0.08);
+            background: rgba(0, 255, 0, 0.06);
             top: 0;
-            animation: scan 4s linear infinite;
+            animation: scan 5s linear infinite;
             z-index: 10;
         }
 
@@ -47,19 +47,19 @@
             width: 100%;
             height: 100%;
             background-image: 
-                linear-gradient(rgba(0, 255, 0, 0.04) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(0, 255, 0, 0.04) 1px, transparent 1px);
+                linear-gradient(rgba(0, 255, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 0, 0.03) 1px, transparent 1px);
             background-size: 30px 30px;
         }
 
-        .circle {
+        .circle1 {
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 360px;
-            height: 360px;
-            border: 1px solid rgba(0, 255, 0, 0.1);
+            width: 400px;
+            height: 400px;
+            border: 1px solid rgba(0, 255, 0, 0.08);
             border-radius: 50%;
             z-index: 1;
         }
@@ -69,40 +69,52 @@
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            width: 250px;
-            height: 250px;
-            border: 1px dashed rgba(0, 255, 0, 0.06);
+            width: 280px;
+            height: 280px;
+            border: 1px dashed rgba(0, 255, 0, 0.05);
+            border-radius: 50%;
+            z-index: 1;
+        }
+
+        .circle3 {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 500px;
+            height: 500px;
+            border: 1px solid rgba(0, 255, 0, 0.03);
             border-radius: 50%;
             z-index: 1;
         }
 
         .header {
             position: absolute;
-            top: 8px;
-            left: 12px;
+            top: 10px;
+            left: 15px;
             color: #00cc00;
-            font-size: 12px;
+            font-size: 13px;
             letter-spacing: 2px;
-            z-index: 5;
-            text-shadow: 0 0 4px #00cc00;
+            z-index: 20;
+            text-shadow: 0 0 5px #00cc00;
         }
 
         .time {
             position: absolute;
-            top: 8px;
-            right: 12px;
+            top: 10px;
+            right: 15px;
             color: #00aa00;
-            font-size: 11px;
-            z-index: 5;
+            font-size: 12px;
+            z-index: 20;
         }
 
         .status {
             position: absolute;
-            top: 30px;
-            right: 12px;
+            top: 35px;
+            right: 15px;
             color: #ff4444;
-            font-size: 11px;
-            z-index: 5;
+            font-size: 12px;
+            z-index: 20;
             animation: blink 1s infinite;
         }
 
@@ -113,83 +125,159 @@
 
         .target {
             position: absolute;
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
             background: #00aaff;
             border-radius: 50%;
-            box-shadow: 0 0 20px #00aaff, 0 0 40px rgba(0, 170, 255, 0.3);
+            box-shadow: 0 0 25px #00aaff, 0 0 50px rgba(0, 170, 255, 0.4);
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            z-index: 4;
+            z-index: 5;
+            animation: targetPulse 2s infinite;
+        }
+
+        @keyframes targetPulse {
+            0%, 100% { box-shadow: 0 0 25px #00aaff, 0 0 50px rgba(0, 170, 255, 0.4); }
+            50% { box-shadow: 0 0 40px #00aaff, 0 0 70px rgba(0, 170, 255, 0.6); }
         }
 
         .target-label {
             position: absolute;
-            top: 54%;
+            top: 55%;
             left: 50%;
             transform: translateX(-50%);
             color: #00aaff;
-            font-size: 10px;
-            z-index: 5;
+            font-size: 11px;
+            z-index: 20;
             text-align: center;
+            text-shadow: 0 0 5px #00aaff;
         }
 
-        .attacker {
+        .attacker-main {
             position: absolute;
-            width: 12px;
-            height: 12px;
+            width: 15px;
+            height: 15px;
             background: #ff0000;
             border-radius: 50%;
-            box-shadow: 0 0 18px #ff0000;
-            top: 50%;
-            left: 50%;
-            z-index: 6;
-            animation: pulse 1s infinite;
+            box-shadow: 0 0 25px #ff0000, 0 0 50px rgba(255, 0, 0, 0.5);
+            z-index: 8;
+            animation: attackerPulse 0.8s infinite;
         }
 
-        @keyframes pulse {
+        @keyframes attackerPulse {
             0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.3); }
+            50% { transform: scale(1.5); }
         }
 
         .attacker-label {
             position: absolute;
             color: #ff0000;
             font-size: 10px;
-            z-index: 6;
+            z-index: 20;
             white-space: nowrap;
+            text-shadow: 0 0 5px #ff0000;
         }
 
-        .line {
+        .victim {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: rgba(0, 170, 255, 0.5);
+            border-radius: 50%;
+            box-shadow: 0 0 10px rgba(0, 170, 255, 0.3);
+            z-index: 3;
+        }
+
+        .hacker-small {
+            position: absolute;
+            width: 7px;
+            height: 7px;
+            background: rgba(255, 0, 0, 0.6);
+            border-radius: 50%;
+            box-shadow: 0 0 8px rgba(255, 0, 0, 0.3);
+            z-index: 4;
+        }
+
+        .defender {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #00ff00;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #00ff00;
+            z-index: 6;
+            animation: defenderPulse 3s infinite;
+        }
+
+        @keyframes defenderPulse {
+            0%, 100% { box-shadow: 0 0 10px #00ff00; }
+            50% { box-shadow: 0 0 20px #00ff00; }
+        }
+
+        .defender-label {
+            position: absolute;
+            color: #00ff00;
+            font-size: 8px;
+            z-index: 20;
+            text-shadow: 0 0 3px #00ff00;
+        }
+
+        .faint-line {
             position: absolute;
             height: 1px;
-            background: #ff3333;
+            background: rgba(255, 0, 0, 0.15);
             transform-origin: left center;
             z-index: 2;
-            box-shadow: 0 0 8px #ff0000;
-            transition: all 0.4s;
+        }
+
+        .main-line {
+            position: absolute;
+            height: 2px;
+            background: #ff0000;
+            transform-origin: left center;
+            z-index: 7;
+            box-shadow: 0 0 12px #ff0000, 0 0 25px rgba(255, 0, 0, 0.6);
+            transition: all 0.5s;
+            animation: linePulse 0.6s infinite;
+        }
+
+        @keyframes linePulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
         }
 
         .log {
             position: absolute;
-            bottom: 8px;
-            left: 12px;
+            bottom: 10px;
+            left: 15px;
             color: #00cc00;
             font-size: 10px;
             line-height: 1.5;
-            z-index: 5;
+            z-index: 20;
             text-shadow: 0 0 2px #00cc00;
+            max-width: 350px;
         }
 
         .coords {
             position: absolute;
-            bottom: 8px;
-            right: 12px;
+            bottom: 10px;
+            right: 15px;
             color: #00aa00;
             font-size: 10px;
-            z-index: 5;
+            z-index: 20;
             text-align: right;
+        }
+
+        .alert-box {
+            position: absolute;
+            top: 60px;
+            right: 15px;
+            color: #ff0000;
+            font-size: 10px;
+            z-index: 20;
+            text-align: right;
+            animation: blink 0.7s infinite;
         }
     </style>
 </head>
@@ -197,25 +285,28 @@
     <div class="screen">
         <div class="grid"></div>
         <div class="scanline"></div>
-        <div class="circle"></div>
+        <div class="circle1"></div>
         <div class="circle2"></div>
+        <div class="circle3"></div>
 
-        <div class="header">◉ SECURE TRACKING SYSTEM v2.7</div>
+        <div class="header">◉ GLOBAL THREAT MONITORING SYSTEM v3.1</div>
         <div class="time" id="time">00:00:00</div>
-        <div class="status" id="status">⚠ THREAT ACTIVE</div>
+        <div class="status" id="status">⚠ SOLO TARGET LOCKED</div>
+        <div class="alert-box" id="alertBox">▲ NEW THREAT<br>NO PREVIOUS RECORDS</div>
 
         <div class="target"></div>
-        <div class="target-label">TARGET: LOCKED</div>
+        <div class="target-label">TARGET: KARIM<br>THREAT LEVEL: CRITICAL</div>
 
-        <div class="attacker" id="attacker"></div>
-        <div class="attacker-label" id="attackerLabel">ATTACKER</div>
+        <div class="attacker-main" id="attackerMain"></div>
+        <div class="attacker-label" id="attackerLabel">UNKNOWN ATTACKER</div>
 
-        <div class="line" id="line"></div>
+        <div class="main-line" id="mainLine"></div>
 
         <div class="log" id="log">
-            [*] Initializing...<br>
-            [*] Connecting to secure node...<br>
-            [*] Target locked.
+            [*] Initializing global network...<br>
+            [*] Connecting to secure nodes...<br>
+            [*] Multiple threats detected...<br>
+            [*] Primary target locked.
         </div>
 
         <div class="coords" id="coords">
@@ -225,22 +316,46 @@
     </div>
 
     <script>
-        const attacker = document.getElementById('attacker');
+        const attackerMain = document.getElementById('attackerMain');
         const attackerLabel = document.getElementById('attackerLabel');
-        const line = document.getElementById('line');
+        const mainLine = document.getElementById('mainLine');
         const log = document.getElementById('log');
         const timeEl = document.getElementById('time');
         const statusEl = document.getElementById('status');
         const coordsEl = document.getElementById('coords');
+        const alertBox = document.getElementById('alertBox');
 
-        const centerX = 400;
-        const centerY = 225;
-        const radius = 120;
-
+        const centerX = 425;
+        const centerY = 250;
+        const radius = 140;
         let angle = Math.random() * 360;
 
+        // Victims
+        const victims = [
+            { x: 150, y: 120 }, { x: 680, y: 100 }, { x: 720, y: 380 },
+            { x: 100, y: 350 }, { x: 300, y: 80 }, { x: 550, y: 420 }
+        ];
+
+        // Small hackers
+        const hackers = [
+            { x: 180, y: 180, dx: 1, dy: 0.5 },
+            { x: 650, y: 150, dx: -0.5, dy: 1 },
+            { x: 700, y: 300, dx: 0.3, dy: -0.8 },
+            { x: 130, y: 280, dx: -0.7, dy: 0.4 },
+            { x: 500, y: 380, dx: 0.6, dy: -0.3 }
+        ];
+
+        // Defenders
+        const defenders = [
+            { x: 200, y: 400, label: "DEFENDER - SOUTH LIBYA" },
+            { x: 650, y: 60, label: "DEFENDER - USA" },
+            { x: 750, y: 180, label: "DEFENDER - USA" },
+            { x: 100, y: 80, label: "DEFENDER - N.EUROPE" },
+            { x: 350, y: 450, label: "DEFENDER - N.EUROPE" }
+        ];
+
         const statusMessages = [
-            "⚠ THREAT ACTIVE",
+            "⚠ SOLO TARGET LOCKED",
             "⚠ SIGNAL UNSTABLE",
             "⚠ REROUTING...",
             "⚠ TRACKING RESTORED",
@@ -249,18 +364,20 @@
         ];
 
         const logMessages = [
-            "[*] Scanning node...",
+            "[*] Scanning global nodes...",
             "[*] IP shifted: 197.x.x.x",
-            "[*] Firewall detected",
+            "[*] Multiple attacks detected",
             "[*] Analyzing traffic...",
-            "[*] Attacker moving",
+            "[*] Primary attacker moving",
             "[*] New route found",
             "[*] Signal encrypted",
             "[*] Monitoring target...",
             "[*] Threat level updated",
             "[*] Tracking active...",
             "[*] Coordinates changed",
-            "[*] Rerouting connection..."
+            "[*] Rerouting connection...",
+            "[*] Unknown attacker identified",
+            "[*] No previous records found"
         ];
 
         const cities = [
@@ -273,6 +390,44 @@
             { name: "Unknown", lat: 0, lon: 0 }
         ];
 
+        function createVictims() {
+            victims.forEach(v => {
+                const el = document.createElement('div');
+                el.className = 'victim';
+                el.style.left = v.x + 'px';
+                el.style.top = v.y + 'px';
+                document.querySelector('.screen').appendChild(el);
+            });
+        }
+
+        function createHackers() {
+            hackers.forEach(h => {
+                const el = document.createElement('div');
+                el.className = 'hacker-small';
+                el.style.left = h.x + 'px';
+                el.style.top = h.y + 'px';
+                el.id = 'hacker-' + hackers.indexOf(h);
+                document.querySelector('.screen').appendChild(el);
+            });
+        }
+
+        function createDefenders() {
+            defenders.forEach(d => {
+                const el = document.createElement('div');
+                el.className = 'defender';
+                el.style.left = d.x + 'px';
+                el.style.top = d.y + 'px';
+                document.querySelector('.screen').appendChild(el);
+
+                const label = document.createElement('div');
+                label.className = 'defender-label';
+                label.style.left = (d.x + 12) + 'px';
+                label.style.top = (d.y - 5) + 'px';
+                label.textContent = d.label;
+                document.querySelector('.screen').appendChild(label);
+            });
+        }
+
         function updateTime() {
             const now = new Date();
             const h = String(now.getHours()).padStart(2, '0');
@@ -281,15 +436,15 @@
             timeEl.textContent = `${h}:${m}:${s}`;
         }
 
-        function updatePositions() {
+        function updateMainAttacker() {
             const rad = angle * (Math.PI / 180);
             const x = centerX + Math.cos(rad) * radius;
             const y = centerY + Math.sin(rad) * radius;
 
-            attacker.style.left = x + 'px';
-            attacker.style.top = y + 'px';
+            attackerMain.style.left = x + 'px';
+            attackerMain.style.top = y + 'px';
 
-            attackerLabel.style.left = (x + 10) + 'px';
+            attackerLabel.style.left = (x + 15) + 'px';
             attackerLabel.style.top = (y - 15) + 'px';
 
             const dx = centerX - x;
@@ -297,21 +452,37 @@
             const length = Math.sqrt(dx * dx + dy * dy);
             const lineAngle = Math.atan2(dy, dx) * (180 / Math.PI);
 
-            line.style.width = length + 'px';
-            line.style.left = x + 'px';
-            line.style.top = y + 'px';
-            line.style.transform = `rotate(${lineAngle}deg)`;
+            mainLine.style.width = length + 'px';
+            mainLine.style.left = x + 'px';
+            mainLine.style.top = y + 'px';
+            mainLine.style.transform = `rotate(${lineAngle}deg)`;
         }
 
-        function moveAttacker() {
-            angle += (Math.random() - 0.5) * 60;
+        function moveMainAttacker() {
+            angle += (Math.random() - 0.5) * 50;
             angle = Math.max(0, Math.min(360, angle));
-            updatePositions();
+            updateMainAttacker();
+        }
+
+        function moveSmallHackers() {
+            hackers.forEach((h, i) => {
+                h.x += h.dx * 5;
+                h.y += h.dy * 5;
+
+                if (h.x < 30 || h.x > 820) h.dx *= -1;
+                if (h.y < 30 || h.y > 470) h.dy *= -1;
+
+                const el = document.getElementById('hacker-' + i);
+                if (el) {
+                    el.style.left = h.x + 'px';
+                    el.style.top = h.y + 'px';
+                }
+            });
         }
 
         function addLog(message) {
             const lines = log.innerHTML.split('<br>');
-            if (lines.length > 6) {
+            if (lines.length > 7) {
                 lines.shift();
             }
             lines.push(message);
@@ -332,8 +503,13 @@
         let logIndex = 0;
         let statusIndex = 0;
 
+        createVictims();
+        createHackers();
+        createDefenders();
+
         setInterval(updateTime, 1000);
-        setInterval(moveAttacker, 1000);
+        setInterval(moveMainAttacker, 900);
+        setInterval(moveSmallHackers, 3000);
         setInterval(updateCoords, 3500);
 
         setInterval(() => {
@@ -347,7 +523,7 @@
         }, 4500);
 
         updateTime();
-        updatePositions();
+        updateMainAttacker();
         updateCoords();
     </script>
 </body>
