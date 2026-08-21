@@ -279,6 +279,41 @@
             text-align: right;
             animation: blink 0.7s infinite;
         }
+        .popup {
+            position: absolute;
+            background: rgba(0, 10, 0, 0.95);
+            border: 1px solid #00ff00;
+            padding: 15px;
+            z-index: 50;
+            display: none;
+            min-width: 220px;
+            box-shadow: 0 0 20px rgba(0, 255, 0, 0.3);
+        }
+
+        .popup-title {
+            color: #00ff00;
+            font-size: 12px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            text-align: center;
+            border-bottom: 1px solid #00ff00;
+            padding-bottom: 5px;
+        }
+
+        .popup-text {
+            color: #00cc00;
+            font-size: 10px;
+            line-height: 1.8;
+        }
+
+        .popup-close {
+            color: #ff0000;
+            cursor: pointer;
+            font-size: 10px;
+            text-align: right;
+            margin-top: 5px;
+        }
     </style>
 </head>
 <body>
@@ -313,6 +348,30 @@
             LAT: --.--<br>
             LON: --.--
         </div>
+            <div class="popup" id="targetPopup">
+        <div class="popup-title">◉ TARGET DETAILS</div>
+        <div class="popup-text">
+            DEVICE-ID: X7K9Q-4471<br>
+            STATUS: UNDER ATTACK<br>
+            THREAT LEVEL: CRITICAL<br>
+            CONNECTION: ACTIVE<br>
+            LOCATION: UNKNOWN
+        </div>
+        <div class="popup-close" onclick="closePopup()">[ CLOSE ]</div>
+    </div>
+
+    <div class="popup" id="attackerPopup">
+        <div class="popup-title">◉ ATTACKER DETAILS</div>
+        <div class="popup-text">
+            IDENTITY: UNKNOWN<br>
+            RECORD: NEW THREAT<br>
+            ORIGIN: UNTRACED<br>
+            ACTIVITY: SOLO TARGET<br>
+            PREVIOUS: NO RECORDS
+        </div>
+        <div class="popup-close" onclick="closePopup()">[ CLOSE ]</div>
+    </div>
+    </div>
     </div>
 
     <script>
@@ -555,6 +614,33 @@ function playSound(name) {
         updateTime();
         updateMainAttacker();
         updateCoords();
+            // ============ POPUP SYSTEM ============
+    const targetPopup = document.getElementById('targetPopup');
+    const attackerPopup = document.getElementById('attackerPopup');
+
+    function closePopup() {
+        targetPopup.style.display = 'none';
+        attackerPopup.style.display = 'none';
+    }
+
+    document.querySelector('.target').addEventListener('click', function(e) {
+        targetPopup.style.display = 'block';
+        targetPopup.style.left = (centerX - 100) + 'px';
+        targetPopup.style.top = (centerY + 30) + 'px';
+        attackerPopup.style.display = 'none';
+        e.stopPropagation();
+    });
+
+    attackerMain.addEventListener('click', function(e) {
+        attackerPopup.style.display = 'block';
+        attackerPopup.style.left = (parseInt(attackerMain.style.left) + 20) + 'px';
+        attackerPopup.style.top = (parseInt(attackerMain.style.top) + 20) + 'px';
+        targetPopup.style.display = 'none';
+        e.stopPropagation();
+    });
+
+    document.querySelector('.screen').addEventListener('click', closePopup);
+    // ============ END POPUP SYSTEM ============
     </script>
 </body>
 </html>
