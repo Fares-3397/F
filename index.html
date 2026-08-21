@@ -330,6 +330,22 @@
         const radius = 140;
         let angle = Math.random() * 360;
 
+        // ============ AUDIO SYSTEM ============
+const sounds = {
+    danger: new Audio(encodeURIComponent('Danger! Enemy approaching.mp3')),
+    rerouting: new Audio(encodeURIComponent('Rerouting connection.mp3')),
+    critical: new Audio(encodeURIComponent('Threat level critical.mp3')),
+    moving: new Audio(encodeURIComponent('Unknown attacker moving.mp3')),
+    warning: new Audio(encodeURIComponent('Warning! Target at risk.mp3'))
+};
+
+function playSound(name) {
+    const audio = sounds[name];
+    audio.volume = 0.3;
+    audio.play().catch(e => console.log('Audio blocked'));
+}
+// ============ END AUDIO SYSTEM ============
+        
         // Victims
         const victims = [
             { x: 150, y: 120 }, { x: 680, y: 100 }, { x: 720, y: 380 },
@@ -518,9 +534,23 @@
         }, 2200);
 
         setInterval(() => {
-            statusEl.textContent = statusMessages[statusIndex % statusMessages.length];
-            statusIndex++;
-        }, 4500);
+    const status = statusMessages[statusIndex % statusMessages.length];
+    statusEl.textContent = status;
+    
+    if (status === "⚠ HIGH RISK") {
+        playSound('danger');
+    } else if (status === "⚠ SIGNAL UNSTABLE") {
+        playSound('rerouting');
+    } else if (status === "⚠ SOLO TARGET LOCKED") {
+        playSound('critical');
+    } else if (status === "⚠ MOVEMENT DETECTED") {
+        playSound('moving');
+    } else if (status === "⚠ REROUTING...") {
+        playSound('warning');
+    }
+    
+    statusIndex++;
+}, 4500);
 
         updateTime();
         updateMainAttacker();
